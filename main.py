@@ -4,8 +4,8 @@
 #
 
 import os
-from pathlib import Path
-
+from pathlib import WindowsPath
+import subprocess
 
 
 def mp4_to_m3u8(src, dst, resolution="SD", output_file_name=None):
@@ -25,11 +25,11 @@ def mp4_to_m3u8(src, dst, resolution="SD", output_file_name=None):
     file_name = generate_file_name(file_name=output_file_name, resolution=resolution)
     dst = create_dir(dst, resolution)
     full_dst = set_path(dst, file_name)
-    full_dst = Path(full_dst) #fix path problems
+    
+    src = fix_whitespace_in_path(src)
+    full_dst = fix_whitespace_in_path(full_dst)
 
-    print("full dst is: ", full_dst)
     return os.system(f"ffmpeg -i {src} -vf scale={dimension} -bsf:v h264_mp4toannexb -hls_list_size 0 {full_dst}")
-
 
 def generate_file_name(file_name="playlist", resolution="SD", extention="m3u8"):
     """ return file name with resulotion
@@ -59,6 +59,12 @@ def create_dir(path, dir_name):
 def set_path(path, file_name):
     return os.path.join(path, file_name)
 
+
+def fix_whitespace_in_path(path):
+    "fix whitespace path on windows"
+    if os.name == 'nt': #if run prog on Windows
+        return '\"' + path + '\"' # envlop path by two ""
+    return path
 
 
 if __name__ == "__main__":

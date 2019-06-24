@@ -8,7 +8,7 @@ from tkinter import ttk
 from tkinter.filedialog import askdirectory, askopenfilename
 from tkinter import messagebox
 
-from mp4_to_m3u8 import *
+from main import *
 
 
 class Program:
